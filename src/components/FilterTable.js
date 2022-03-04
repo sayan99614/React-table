@@ -3,6 +3,7 @@ import {
   useTable,
   useSortBy,
   useGlobalFilter,
+  useFilters,
 } from "react-table/dist/react-table.development";
 import mockdata from "../mockdata.json";
 import { COLUMNS, GROUPED_COLUMNS } from "./Columns";
@@ -10,7 +11,12 @@ import GlobalFilter from "./GlobalFilter";
 function FilterTable() {
   const columns = useMemo(() => COLUMNS, []);
   const data = useMemo(() => mockdata, []);
-  const tableInstance = useTable({ columns, data }, useGlobalFilter, useSortBy);
+  const tableInstance = useTable(
+    { columns, data },
+    useGlobalFilter,
+    useFilters,
+    useSortBy
+  );
   const {
     getTableProps,
     getTableBodyProps,
@@ -30,11 +36,9 @@ function FilterTable() {
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column) => (
-                <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                <th {...column.getHeaderProps()}>
                   {column.render("Header")}
-                  <span>
-                    {column.isSorted ? (column.isSortedDesc ? "🔽" : "🔼") : ""}
-                  </span>
+                  <div>{column.canFilter ? column.render("Filter") : null}</div>
                 </th>
               ))}
             </tr>
